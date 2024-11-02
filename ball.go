@@ -10,22 +10,25 @@ import (
 )
 
 type Ball struct {
-	X                    float32
-	Y                    float32
 	dX                   float32
 	dY                   float32
 	dMax                 float32
 	diagonalVectorLength float32
+	Colliding
 }
 
 func initBall() *Ball {
 	return &Ball{
-		X:                    float32(160 + (-20 + rand.Intn(40))),
-		Y:                    float32(rand.Intn(120)),
 		dX:                   ballDMax,
 		dY:                   ballDMax,
 		dMax:                 ballDMax,
 		diagonalVectorLength: float32(math.Hypot(1, 1)),
+		Colliding: Colliding{
+			X: float32(160 + (-20 + rand.Intn(40))),
+			Y: float32(rand.Intn(120)),
+			W: ballW,
+			H: ballH,
+		},
 	}
 }
 
@@ -57,6 +60,11 @@ func (ball *Ball) Update(player *Paddle, bricks *[]*Brick) {
 	}
 
 	if player != nil {
+		if ball.Collides(player) {
+			if ball.dY > 0 {
+				ball.dY = -ball.dY
+			}
+		}
 		//TODO optimize (probably check for distance first, check collision if close)
 	}
 
@@ -69,17 +77,11 @@ func (ball *Ball) Update(player *Paddle, bricks *[]*Brick) {
 	}
 }
 
-func (ball *Ball) Collides(collider *Collider) bool {
-	/*
-		return ball.X < float32(player.X+paddleW) &&
-			ball.X+ballW > float32(player.X) &&
-			ball.Y < float32(player.Y+paddleH) &&
-			ball.Y+ballH > float32(player.Y)
-	*/
-	return ball.X < collider.Right &&
-		ball.X+ballW > collider.Left &&
-		ball.Y < collider.Bottom &&
-		ball.Y+ballH > collider.Top
+func (ball *Ball) Collides(collider Collider) bool {
+	return ball.LeftX() < collider.RightX() &&
+		ball.RightX() > collider.LeftX() &&
+		ball.TopY() < collider.BottomY() &&
+		ball.BottomY() > collider.TopY()
 }
 func (ball *Ball) Reset() {
 	side := rand.Intn(3)
@@ -88,11 +90,15 @@ func (ball *Ball) Reset() {
 		coeff = -1
 	}
 	*ball = Ball{
-		X:                    float32(160 + (-20 + rand.Intn(40))),
-		Y:                    float32(rand.Intn(120)),
 		dX:                   float32(coeff) * ballDMax,
 		dY:                   ballDMax,
 		dMax:                 ballDMax,
 		diagonalVectorLength: float32(math.Hypot(1, 1)),
+		Colliding: Colliding{
+			X: float32(160 + (-20 + rand.Intn(40))),
+			Y: float32(rand.Intn(120)),
+			W: ballW,
+			H: ballH,
+		},
 	}
 }

@@ -9,16 +9,19 @@ import (
 
 type Paddle struct {
 	//TODO
-	X     int
-	Y     int
 	Score int
 	Lifes int
+	Colliding
 }
 
 func initPaddle() *Paddle {
 	return &Paddle{
-		X:     screenW / 2,
-		Y:     screenH - 15,
+		Colliding: Colliding{
+			X: screenW / 2,
+			Y: screenH - 15,
+			W: paddleW,
+			H: paddleH,
+		},
 		Lifes: 3,
 	}
 }
@@ -36,5 +39,5 @@ func (paddle *Paddle) Update(dx int) {
 		return
 	}
 
-	paddle.X += 2 * dx
+	paddle.X += float32(2 * dx)
 }

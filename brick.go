@@ -8,11 +8,8 @@ import (
 )
 
 type Brick struct {
-	X      int
-	Y      int
-	Width  int
-	Height int
-	Lifes  int
+	Lifes int
+	Colliding
 }
 
 func generateBricks() *[]*Brick {
@@ -23,11 +20,13 @@ func generateBricks() *[]*Brick {
 		for j := 0; j < 3; j++ {
 			for i := 0; i < 10; i++ {
 				bricks = append(bricks, &Brick{
-					X:      currX,
-					Y:      currY,
-					Width:  brickW,
-					Height: brickH,
-					Lifes:  1,
+					Colliding: Colliding{
+						X: float32(currX),
+						Y: float32(currY),
+						W: brickW,
+						H: brickH,
+					},
+					Lifes: 1,
 				})
 				currX += brickW
 			}
