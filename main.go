@@ -18,8 +18,9 @@ const (
 	screenW  = 320
 	screenH  = 240
 	ballDMax = 2
-	brickW   = 32
-	brickH   = 8
+
+	brickW = 32
+	brickH = 8
 )
 
 type Game struct {
